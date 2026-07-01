@@ -1,234 +1,1072 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
+<html lang="zh-CN" data-lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>周子晴 (Shealyn Chow) | 个人主页</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+    <title>周子晴 Shealyn Chow | Portfolio</title>
+    <style>
+        /* ========================================
+             CSS CUSTOM PROPERTIES
+             ======================================== */
+        :root {
+            --bg: #faf9f7;
+            --bg-alt: #f3f1ed;
+            --text: #1c1c1e;
+            --text-secondary: #6b7280;
+            --text-tertiary: #9ca3af;
+            --accent: #78716c;
+            --accent-light: #a8a29e;
+            --card-bg: #ffffff;
+            --border: #e7e5e4;
+            --border-light: #f0efed;
+            --overlay-bg: rgba(28, 28, 30, 0.97);
+            --font-serif: 'Georgia', 'Noto Serif SC', 'Source Han Serif SC', serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --max-width: 1200px;
+            --section-padding: clamp(80px, 12vw, 140px);
+        }
 
-    <nav class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-            <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Shealyn Chow</span>
-            <div class="space-x-6 text-sm font-medium text-gray-600">
-                <a href="#about" class="hover:text-blue-600 transition">关于</a>
-                <a href="#skills" class="hover:text-blue-600 transition">技能</a>
-                <a href="#portfolio" class="hover:text-blue-600 transition">项目作品</a>
-                <a href="#experience" class="hover:text-blue-600 transition">工作经历</a>
-                <a href="#contact" class="hover:text-blue-600 transition">联系我</a>
-            </div>
+        /* ========================================
+             RESET & BASE
+             ======================================== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+        ::selection { background: var(--accent); color: #fff; }
+
+        /* ========================================
+             LANGUAGE TOGGLE
+             ======================================== */
+        .lang-switch {
+            position: fixed; top: 28px; right: 28px; z-index: 100;
+            display: flex; gap: 2px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .lang-switch button {
+            padding: 6px 14px; border: none; background: transparent;
+            font-size: 13px; font-weight: 500; font-family: var(--font-sans);
+            color: var(--text-secondary); cursor: pointer;
+            border-radius: 20px; transition: var(--transition-fast);
+            letter-spacing: 0.02em;
+        }
+        .lang-switch button.active {
+            background: var(--text); color: #fff;
+        }
+
+        /* ========================================
+             BILINGUAL VISIBILITY
+             ======================================== */
+        [data-lang="zh"] .lang-en { display: none; }
+        [data-lang="en"] .lang-zh { display: none; }
+
+        /* ========================================
+             NAVIGATION — HAMBURGER
+             ======================================== */
+        .nav-trigger {
+            position: fixed; top: 24px; left: 28px; z-index: 101;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: none; cursor: pointer;
+            padding: 0;
+        }
+        .nav-trigger span {
+            display: block; width: 26px; height: 1.5px;
+            background: var(--text); position: relative;
+            transition: var(--transition);
+        }
+        .nav-trigger span::before, .nav-trigger span::after {
+            content: ''; display: block; width: 26px; height: 1.5px;
+            background: var(--text); position: absolute; left: 0;
+            transition: var(--transition);
+        }
+        .nav-trigger span::before { top: -8px; }
+        .nav-trigger span::after { top: 8px; }
+        .nav-trigger.active span { background: transparent; }
+        .nav-trigger.active span::before { top: 0; transform: rotate(45deg); }
+        .nav-trigger.active span::after { top: 0; transform: rotate(-45deg); }
+        .nav-trigger.active span, .nav-trigger.active span::before, .nav-trigger.active span::after {
+            background: #fff;
+        }
+
+        /* ========================================
+             NAVIGATION — OVERLAY
+             ======================================== */
+        .nav-overlay {
+            position: fixed; inset: 0; z-index: 99;
+            background: var(--overlay-bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity var(--transition-slow);
+        }
+        .nav-overlay.open {
+            opacity: 1; pointer-events: auto;
+        }
+        .nav-overlay a {
+            font-family: var(--font-serif);
+            font-size: clamp(28px, 5vw, 48px);
+            color: #fff; text-decoration: none;
+            padding: 16px 0;
+            transition: var(--transition);
+            letter-spacing: -0.01em;
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease, color 0.3s ease;
+        }
+        .nav-overlay.open a {
+            opacity: 1; transform: translateY(0);
+        }
+        .nav-overlay.open a:nth-child(1) { transition-delay: 0.1s; }
+        .nav-overlay.open a:nth-child(2) { transition-delay: 0.18s; }
+        .nav-overlay.open a:nth-child(3) { transition-delay: 0.26s; }
+        .nav-overlay.open a:nth-child(4) { transition-delay: 0.34s; }
+        .nav-overlay.open a:nth-child(5) { transition-delay: 0.42s; }
+        .nav-overlay a:hover { color: var(--accent-light); }
+        .nav-overlay .nav-lang {
+            font-family: var(--font-sans); font-size: 14px;
+            margin-top: 48px; letter-spacing: 0.05em;
+            text-transform: uppercase; color: rgba(255,255,255,0.5);
+        }
+
+        /* ========================================
+             HERO
+             ======================================== */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center; gap: 64px;
+            padding: var(--section-padding) 24px;
+            max-width: var(--max-width); margin: 0 auto;
+        }
+        .hero-inner { max-width: 720px; flex: 1; }
+        .hero-photo {
+            flex-shrink: 0; width: clamp(240px, 28vw, 340px);
+            aspect-ratio: 3/4; border-radius: 20px; overflow: hidden;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+        .hero-photo img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .hero-greeting {
+            font-size: 14px; text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--text-tertiary); margin-bottom: 24px; font-weight: 500;
+        }
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(42px, 8vw, 80px);
+            font-weight: 400; line-height: 1.12;
+            letter-spacing: -0.02em; color: var(--text);
+            margin-bottom: 20px;
+        }
+        .hero h1 .en-name {
+            display: block; font-size: clamp(20px, 3vw, 28px);
+            font-family: var(--font-sans); font-weight: 300;
+            color: var(--text-secondary); letter-spacing: 0.04em;
+            margin-top: 8px;
+        }
+        .hero-role {
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: var(--accent); font-weight: 500;
+            margin-bottom: 28px;
+        }
+        .hero-desc {
+            font-size: 16px; color: var(--text-secondary);
+            max-width: 560px; line-height: 1.8; margin-bottom: 40px;
+        }
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 40px;
+            font-size: 15px; font-weight: 500; text-decoration: none;
+            font-family: var(--font-sans); cursor: pointer;
+            transition: var(--transition); border: 1px solid transparent;
+        }
+        .btn-primary {
+            background: var(--text); color: #fff;
+        }
+        .btn-primary:hover { background: #333; transform: translateY(-1px); }
+        .btn-outline {
+            background: transparent; color: var(--text);
+            border-color: var(--border);
+        }
+        .btn-outline:hover { border-color: var(--text); background: var(--card-bg); }
+
+        /* ========================================
+             SECTION SHARED
+             ======================================== */
+        section { padding: var(--section-padding) 24px; }
+        .section-label {
+            font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-tertiary); margin-bottom: 16px; font-weight: 500;
+        }
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 400; letter-spacing: -0.01em;
+            margin-bottom: 48px; color: var(--text);
+        }
+        .container { max-width: var(--max-width); margin: 0 auto; }
+
+        /* ========================================
+             ABOUT / EDUCATION
+             ======================================== */
+        #about { background: var(--bg-alt); }
+        .edu-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+        .edu-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 16px; padding: 36px; transition: var(--transition);
+        }
+        .edu-card:hover { border-color: var(--border); }
+        .edu-card .year {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--accent); font-weight: 600; margin-bottom: 12px;
+        }
+        .edu-card h3 {
+            font-family: var(--font-serif); font-size: 22px;
+            font-weight: 400; margin-bottom: 6px;
+        }
+        .edu-logo {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+        }
+        .edu-logo img {
+            width: 44px; height: 44px; object-fit: contain;
+            border-radius: 8px; flex-shrink: 0;
+        }
+        .edu-logo .edu-school-name { font-family: var(--font-serif); font-size: 20px; }
+        .edu-card .degree { color: var(--text-secondary); font-size: 15px; margin-bottom: 12px; }
+        .edu-card .focus { color: var(--text-tertiary); font-size: 14px; line-height: 1.7; }
+
+        /* ========================================
+             SKILLS
+             ======================================== */
+        .skills-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .skill-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 16px; padding: 36px; transition: var(--transition);
+        }
+        .skill-card:hover { border-color: var(--border); transform: translateY(-2px); }
+        .skill-icon { font-size: 32px; margin-bottom: 20px; }
+        .skill-card h3 {
+            font-family: var(--font-serif); font-size: 20px;
+            font-weight: 400; margin-bottom: 16px;
+        }
+        .skill-card ul { list-style: none; }
+        .skill-card li {
+            font-size: 14px; color: var(--text-secondary);
+            padding: 5px 0; position: relative; padding-left: 16px;
+        }
+        .skill-card li::before {
+            content: ''; position: absolute; left: 0; top: 13px;
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--accent-light);
+        }
+
+        /* ========================================
+             PORTFOLIO
+             ======================================== */
+        #portfolio { background: var(--bg-alt); }
+        .portfolio-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
+        }
+        .project-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 16px; overflow: hidden; transition: var(--transition);
+            display: flex; flex-direction: column;
+        }
+        .project-card:hover {
+            border-color: var(--border);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        }
+        /* Clickable project card (wrapped in <a>) */
+        a.project-card {
+            text-decoration: none; color: inherit; cursor: pointer;
+        }
+        a.project-card:hover { border-color: var(--accent); }
+        a.project-card .project-body h3 {
+            transition: var(--transition-fast);
+        }
+        a.project-card:hover .project-body h3 { color: var(--accent); }
+
+        .project-cover {
+            height: 200px; display: flex; align-items: flex-end; justify-content: flex-start;
+            font-family: var(--font-serif); font-weight: 400;
+            color: #fff; text-align: left; padding: 0;
+            position: relative; overflow: hidden;
+            background: #e7e5e4; /* fallback if no image */
+        }
+        .project-cover img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; transition: transform 0.6s ease;
+            z-index: 0;
+        }
+        a.project-card:hover .project-cover img { transform: scale(1.04); }
+        .project-cover::after {
+            content: ''; position: absolute; inset: 0; z-index: 1;
+            /* Dark gradient: heavy at bottom for text readability, lighter at top */
+            background: linear-gradient(to top,
+                rgba(0,0,0,0.70) 0%,
+                rgba(0,0,0,0.20) 40%,
+                rgba(0,0,0,0.08) 70%,
+                rgba(0,0,0,0.15) 100%);
+            pointer-events: none;
+        }
+        .project-cover .cover-text {
+            position: relative; z-index: 2;
+            display: block; width: 100%;
+            padding: 16px 24px 20px;
+            font-size: 17px; line-height: 1.35;
+            letter-spacing: -0.01em;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+        }
+        /* Colored cover fallbacks (visible when no <img> is set) */
+        .project-card:nth-child(1) .project-cover { background-color: #6366f1; }
+        .project-card:nth-child(2) .project-cover { background-color: #8b5cf6; }
+        .project-card:nth-child(3) .project-cover { background-color: #7c3aed; }
+        .project-card:nth-child(4) .project-cover { background-color: #059669; }
+        .project-card:nth-child(5) .project-cover { background-color: #ea580c; }
+        .project-card:nth-child(6) .project-cover { background-color: #0d9488; }
+
+        .project-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+        .project-tag {
+            font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--accent); font-weight: 600; margin-bottom: 10px;
+        }
+        .project-body h3 {
+            font-family: var(--font-serif); font-size: 20px;
+            font-weight: 400; margin-bottom: 12px; line-height: 1.35;
+        }
+        .project-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; flex: 1; }
+
+        /* Project links (inside cards that aren't fully clickable) */
+        .project-links {
+            margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px;
+        }
+        .project-link {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 14px; border-radius: 20px;
+            font-size: 12px; font-weight: 500; text-decoration: none;
+            font-family: var(--font-sans);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            transition: var(--transition-fast);
+        }
+        .project-link:hover {
+            border-color: var(--accent); color: var(--accent);
+            background: var(--bg);
+        }
+        .project-link .arrow { font-size: 11px; }
+
+        /* ========================================
+             EXPERIENCE TIMELINE
+             ======================================== */
+        .timeline { position: relative; padding-left: 0; }
+        .timeline::before {
+            content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
+            width: 1px; background: var(--border);
+        }
+        .timeline-item { position: relative; padding-left: 56px; margin-bottom: 48px; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-dot {
+            position: absolute; left: 14px; top: 4px;
+            width: 13px; height: 13px; border-radius: 50%;
+            background: var(--accent); border: 3px solid var(--bg);
+            z-index: 1;
+        }
+        .timeline-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 14px; padding: 28px 32px; transition: var(--transition);
+        }
+        .timeline-card:hover { border-color: var(--border); }
+        .timeline-period {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+            color: var(--accent); font-weight: 600; margin-bottom: 8px;
+        }
+        .timeline-card h3 { font-family: var(--font-serif); font-size: 20px; font-weight: 400; margin-bottom: 4px; }
+        .timeline-role { color: var(--text-secondary); font-size: 14px; margin-bottom: 12px; }
+        .timeline-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ========================================
+             CONTACT
+             ======================================== */
+        #contact { background: var(--bg-alt); }
+        .contact-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .contact-card {
+            background: var(--card-bg); border: 1px solid var(--border-light);
+            border-radius: 14px; padding: 28px; transition: var(--transition);
+        }
+        .contact-card:hover { border-color: var(--border); }
+        .contact-label { font-size: 12px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+        .contact-value { font-size: 15px; font-weight: 500; color: var(--text); word-break: break-all; }
+        .contact-value a { color: var(--text); text-decoration: none; transition: var(--transition-fast); }
+        .contact-value a:hover { color: var(--accent); }
+
+        /* ========================================
+             FOOTER
+             ======================================== */
+        footer {
+            text-align: center; padding: 40px 24px;
+            font-size: 13px; color: var(--text-tertiary);
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* ========================================
+             SCROLL REVEAL ANIMATION
+             ======================================== */
+        .reveal {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal.revealed { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ========================================
+             RESPONSIVE
+             ======================================== */
+        @media (max-width: 768px) {
+            .hero { min-height: auto; padding-top: 140px; padding-bottom: 80px; flex-direction: column-reverse; gap: 40px; }
+            .hero-photo { width: 200px; aspect-ratio: 3/4; }
+            .lang-switch { top: 16px; right: 16px; }
+            .nav-trigger { top: 12px; left: 16px; }
+            .timeline::before { left: 16px; }
+            .timeline-item { padding-left: 44px; }
+            .timeline-dot { left: 10px; }
+            .portfolio-grid { grid-template-columns: 1fr; }
+            .hero-actions { flex-direction: column; }
+            .btn { justify-content: center; }
+            .edu-grid { grid-template-columns: 1fr; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .lang-switch button { padding: 5px 10px; font-size: 12px; }
+            section { padding-left: 16px; padding-right: 16px; }
+            .hero { padding-left: 16px; padding-right: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Language Toggle -->
+    <div class="lang-switch" role="radiogroup" aria-label="Language switcher">
+        <button class="active" data-lang="zh" aria-pressed="true">中文</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="nav-trigger" aria-label="Menu" id="navTrigger">
+        <span></span>
+    </button>
+
+    <!-- Navigation Overlay -->
+    <nav class="nav-overlay" id="navOverlay">
+        <a href="#about" data-nav-close><span class="lang-zh">教育背景</span><span class="lang-en">Education</span></a>
+        <a href="#skills" data-nav-close><span class="lang-zh">技能</span><span class="lang-en">Skills</span></a>
+        <a href="#portfolio" data-nav-close><span class="lang-zh">作品集</span><span class="lang-en">Portfolio</span></a>
+        <a href="#experience" data-nav-close><span class="lang-zh">工作经历</span><span class="lang-en">Experience</span></a>
+        <a href="#contact" data-nav-close><span class="lang-zh">联系方式</span><span class="lang-en">Contact</span></a>
+        <div class="nav-lang">
+            <span class="lang-zh">语言 / Language</span>
+            <span class="lang-en">Language / 语言</span>
         </div>
     </nav>
 
-    <section class="pt-32 pb-20 bg-gradient-to-b from-blue-50 to-white px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">周子晴 (Shealyn Chow)</h1>
-            <p class="mt-4 text-xl md:text-2xl text-blue-600 font-medium">工业数据分析师 | AI产品经理 | PMO项目专员</p>
-            <p class="mt-6 text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
-                深耕数据分析与AI工程领域，具备从底层数据统计、可视化看板搭建，到生成式AI模型微调与商业落地的全链路实战经验。擅长通过数据洞察与流程管理赋能业务增长。
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-inner">
+            <p class="hero-greeting reveal">
+                <span class="lang-zh">你好，我是</span>
+                <span class="lang-en">Hello, I'm</span>
             </p>
-            <div class="mt-10 space-x-4">
-                <a href="#portfolio" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:bg-blue-700 transition">浏览作品集</a>
-                <a href="#contact" class="inline-block bg-white text-gray-700 border border-gray-300 px-6 py-3 rounded-lg font-medium shadow-sm hover:bg-gray-50 transition">获取联系方式</a>
+            <h1 class="reveal reveal-delay-1">
+                <span class="lang-zh">周子晴</span>
+                <span class="lang-en">Shealyn Chow</span>
+                <span class="en-name">
+                    <span class="lang-zh">Shealyn Chow</span>
+                    <span class="lang-en">周子晴</span>
+                </span>
+            </h1>
+            <p class="hero-role reveal reveal-delay-2">
+                <span class="lang-zh">工业数据分析师 · AI 产品经理 · PMO 项目专员</span>
+                <span class="lang-en">Industrial Data Analyst · AI Product Manager · PMO Specialist</span>
+            </p>
+            <p class="hero-desc reveal reveal-delay-3">
+                <span class="lang-zh">深耕数据分析与 AI 工程领域，具备从底层数据统计、可视化看板搭建，到生成式 AI 模型微调与商业落地的全链路实战经验。擅长通过数据洞察与流程管理赋能业务增长。</span>
+                <span class="lang-en">Deeply engaged in data analytics and AI engineering, with end-to-end experience spanning statistical modeling, dashboard visualization, generative AI fine-tuning, and commercial deployment. Passionate about driving business growth through data insights and process management.</span>
+            </p>
+            <div class="hero-actions reveal reveal-delay-4">
+                <a href="#portfolio" class="btn btn-primary">
+                    <span class="lang-zh">浏览作品集</span>
+                    <span class="lang-en">View Portfolio</span>
+                </a>
+                <a href="#contact" class="btn btn-outline">
+                    <span class="lang-zh">联系方式</span>
+                    <span class="lang-en">Get in Touch</span>
+                </a>
+            </div>
+        </div>
+        <!-- Profile Photo — replace src with your own photo -->
+        <div class="hero-photo reveal reveal-delay-2">
+            <img src="images/zzq2.jpg" alt="周子晴 Shealyn Chow" loading="eager">
+        </div>
+    </header>
+
+    <!-- About / Education -->
+    <section id="about">
+        <div class="container">
+            <p class="section-label reveal">
+                <span class="lang-zh">教育背景</span>
+                <span class="lang-en">Education</span>
+            </p>
+            <h2 class="section-title reveal reveal-delay-1">
+                <span class="lang-zh">学术经历</span>
+                <span class="lang-en">Academic Background</span>
+            </h2>
+            <div class="edu-grid">
+                <div class="edu-card reveal reveal-delay-2">
+                    <div class="edu-logo">
+                        <img src="images/lingnan-logo.png" alt="Lingnan University" loading="lazy">
+                        <div>
+                            <h3>
+                                <span class="lang-zh">香港岭南大学</span>
+                                <span class="lang-en">Lingnan University, Hong Kong</span>
+                            </h3>
+                        </div>
+                    </div>
+                    <p class="year">
+                        <span class="lang-zh">硕士研究生 · 2025 – 2026</span>
+                        <span class="lang-en">Master's Degree · 2025 – 2026</span>
+                    </p>
+                    <p class="degree">
+                        <span class="lang-zh">工业数据分析专业</span>
+                        <span class="lang-en">Industrial Data Analytics</span>
+                    </p>
+                    <p class="focus">
+                        <span class="lang-zh">核心方向：生成式 AI、LLM 应用、Tableau 数据可视化、PyTorch、统计学建模</span>
+                        <span class="lang-en">Focus: Generative AI, LLM Applications, Tableau Visualization, PyTorch, Statistical Modeling</span>
+                    </p>
+                </div>
+                <div class="edu-card reveal reveal-delay-3">
+                    <div class="edu-logo">
+                        <img src="images/szu-logo.png" alt="Shenzhen University" loading="lazy">
+                        <div>
+                            <h3>
+                                <span class="lang-zh">深圳大学</span>
+                                <span class="lang-en">Shenzhen University</span>
+                            </h3>
+                        </div>
+                    </div>
+                    <p class="year">
+                        <span class="lang-zh">本科 · 2019 – 2023</span>
+                        <span class="lang-en">Bachelor's Degree · 2019 – 2023</span>
+                    </p>
+                    <p class="degree">
+                        <span class="lang-zh">工商管理专业</span>
+                        <span class="lang-en">Business Administration</span>
+                    </p>
+                    <p class="focus">
+                        <span class="lang-zh">核心方向：战略管理、商务运营、企业组织、市场营销数据分析</span>
+                        <span class="lang-en">Focus: Strategic Management, Business Operations, Organizational Behavior, Marketing Analytics</span>
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="about" class="py-20 px-4 max-w-5xl mx-auto">
-        <h2 class="text-2xl font-bold text-center text-gray-900 mb-12">教育背景</h2>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <span class="text-xs font-semibold text-blue-600 tracking-wider uppercase">硕士研究生 (2025 - 2026)</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-2">香港岭南大学</h3>
-                <p class="text-gray-600 text-sm mt-1">工业数据分析专业</p>
-                <p class="text-gray-500 text-xs mt-2">核心方向：生成式AI、LLM应用、Tableau数据可视化、PyTorch、统计学建模</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <span class="text-xs font-semibold text-blue-600 tracking-wider uppercase">本科 (2019 - 2023)</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-2">深圳大学</h3>
-                <p class="text-gray-600 text-sm mt-1">工商管理专业</p>
-                <p class="text-gray-500 text-xs mt-2">核心方向：战略管理、商务运营、企业组织、市场营销数据分析</p>
-            </div>
-            
-        </div>
-    </section>
-
-    <section id="skills" class="py-20 bg-gray-100 px-4">
-        <div class="max-w-5xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">核心技术栈</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 class="text-lg font-bold text-blue-600 mb-4 flex items-center">📊 数据分析与可视化</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• 熟练运用 Python (Pandas, NumPy) & R 语言进行统计建模</li>
-                        <li>• 精通 SQL 数据库查询与复杂数据清洗</li>
-                        <li>• 熟练使用 Tableau 搭建交互式多维商业看板</li>
-                        <li>• 具备大数据的 5V 分析与 PySpark 架构基础</li>
+    <!-- Skills -->
+    <section id="skills">
+        <div class="container">
+            <p class="section-label reveal">
+                <span class="lang-zh">核心技术栈</span>
+                <span class="lang-en">Core Competencies</span>
+            </p>
+            <h2 class="section-title reveal reveal-delay-1">
+                <span class="lang-zh">专业技能</span>
+                <span class="lang-en">Technical Skills</span>
+            </h2>
+            <div class="skills-grid">
+                <div class="skill-card reveal reveal-delay-1">
+                    <div class="skill-icon">📊</div>
+                    <h3>
+                        <span class="lang-zh">数据分析与可视化</span>
+                        <span class="lang-en">Data Analytics & Visualization</span>
+                    </h3>
+                    <ul>
+                        <li><span class="lang-zh">熟练运用 Python (Pandas, NumPy) & R 语言进行统计建模</span><span class="lang-en">Proficient in Python (Pandas, NumPy) & R for statistical modeling</span></li>
+                        <li><span class="lang-zh">精通 SQL 数据库查询与复杂数据清洗</span><span class="lang-en">Expert in SQL queries and complex data cleaning</span></li>
+                        <li><span class="lang-zh">熟练使用 Tableau 搭建交互式多维商业看板</span><span class="lang-en">Skilled in Tableau for interactive multi-dimensional dashboards</span></li>
+                        <li><span class="lang-zh">具备大数据的 5V 分析与 PySpark 架构基础</span><span class="lang-en">Experience in Big Data 5V analysis and PySpark architecture</span></li>
                     </ul>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 class="text-lg font-bold text-blue-600 mb-4 flex items-center">🤖 算法与大模型微调</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• 掌握 Stable Diffusion v1.5 的 LoRA 技术参数级微调</li>
-                        <li>• 熟悉大模型 API 集成开发（如通义千问等大语言模型）</li>
-                        <li>• 了解 PyTorch 深度学习框架及基于 FastAPI 的后端部署</li>
+                <div class="skill-card reveal reveal-delay-2">
+                    <div class="skill-icon">🤖</div>
+                    <h3>
+                        <span class="lang-zh">算法与大模型微调</span>
+                        <span class="lang-en">Algorithms & LLM Fine-tuning</span>
+                    </h3>
+                    <ul>
+                        <li><span class="lang-zh">掌握 Stable Diffusion v1.5 的 LoRA 技术参数级微调</span><span class="lang-en">Mastered LoRA fine-tuning for Stable Diffusion v1.5</span></li>
+                        <li><span class="lang-zh">熟悉大模型 API 集成开发（如通义千问等大语言模型）</span><span class="lang-en">Experienced in LLM API integration (e.g., Tongyi Qianwen)</span></li>
+                        <li><span class="lang-zh">了解 PyTorch 深度学习框架及基于 FastAPI 的后端部署</span><span class="lang-en">Skilled in PyTorch and FastAPI backend deployment</span></li>
                     </ul>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm">
-                    <h3 class="text-lg font-bold text-blue-600 mb-4 flex items-center">📋 项目管理与运营</h3>
-                    <ul class="space-y-2 text-sm text-gray-600">
-                        <li>• 熟练掌握 IPD（集成产品开发）和 Scrum 敏捷流程框架</li>
-                        <li>• 具备跨部门协同、风险预警与工时/预算精细化管控经验</li>
-                        <li>• 精通 SMART 目标矩阵及 A/B 测试业务指标设计</li>
+                <div class="skill-card reveal reveal-delay-3">
+                    <div class="skill-icon">📋</div>
+                    <h3>
+                        <span class="lang-zh">项目管理与运营</span>
+                        <span class="lang-en">Project Management & Operations</span>
+                    </h3>
+                    <ul>
+                        <li><span class="lang-zh">熟练掌握 IPD 和 Scrum 敏捷流程框架</span><span class="lang-en">Proficient in IPD and Scrum agile frameworks</span></li>
+                        <li><span class="lang-zh">具备跨部门协同、风险预警与工时/预算精细化管控经验</span><span class="lang-en">Cross-functional collaboration, risk management & budget control</span></li>
+                        <li><span class="lang-zh">精通 SMART 目标矩阵及 A/B 测试业务指标设计</span><span class="lang-en">Expert in SMART goal matrices and A/B testing metric design</span></li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="portfolio" class="py-20 px-4 max-w-6xl mx-auto">
-        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">项目作品集</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-blue-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    Stable Diffusion v1.5 微调项目
-                </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">AI工程 / 在校核心项目</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">基于LoRA的视觉风格微调</h3>
-                    <p class="text-sm text-gray-600 mt-2">采用 LoRA 技术在 UNet 与 Text Encoder 上成功训练并沉淀“Lunara”美学风格模型。设计了全栈流程，包含数据清洗、全参数精细化评估，并基于 FastAPI 封装后端部署接口。</p>
-                </div>
-            </div>
+    <!--
+        ============================================================
+        PORTFOLIO — 作品集
+        ============================================================
+        HOW TO ADD / CHANGE IMAGES:
+        Each .project-cover contains an <img> tag pointing to images/placeholder.jpg.
+        Replace the src with your own image path. If no image is set, the
+        colored background (defined in CSS) will show as a fallback.
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-indigo-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    数码喷印文生图 AI 平台
-                </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">AI产品管理 / 敏捷交付</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">产业落地文生图平台开发</h3>
-                    <p class="text-sm text-gray-600 mt-2">担任产品管理角色，推动平台从0到1架构设计。集成外部大模型 API 并完成本地化适配，深度管控多部门交付工时，闭环全流程功能测试，成功达成里程碑节点。</p>
-                </div>
-            </div>
+        Recommended image size: 800×400px (2:1 aspect ratio)
+        Place your images in a folder next to this file, e.g.:
+            images/stable-diffusion.jpg
+            images/texflow.jpg
+            images/tableau.jpg
+        Then update the src below (search for "images/").
+        ============================================================
+    -->
+    <section id="portfolio">
+        <div class="container">
+            <p class="section-label reveal">
+                <span class="lang-zh">项目作品集</span>
+                <span class="lang-en">Portfolio</span>
+            </p>
+            <h2 class="section-title reveal reveal-delay-1">
+                <span class="lang-zh">精选项目</span>
+                <span class="lang-en">Featured Projects</span>
+            </h2>
+            <div class="portfolio-grid">
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-purple-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    Tableau 交互式数据分析看板
-                </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">数据可视化 / 商业洞察</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">宏观经济与Netflix深度看板</h3>
-                    <p class="text-sm text-gray-600 mt-2">基于各球 GDP 宏观经济数据及 Netflix 后台流媒体播放特征，清洗多源异构数据集，在 Tableau 中构建高交互性实时刷新仪表盘，为多维业务决策输出直观支撑。</p>
-                </div>
-            </div>
+                <!-- Project 1: Stable Diffusion — clickable, links to GitHub -->
+                <a href="https://github.com/Calcifer-0307/Text-to-lmage-Generation-Model-Based-on-Fine-Tuned-Stable-Diffusion-v1.5"
+                   target="_blank" rel="noopener"
+                   class="project-card reveal reveal-delay-1">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-sd-lora.jpg -->
+                        <img src="images/proj-sd-lora.jpg" alt="Stable Diffusion LoRA微调项目截图" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">Stable Diffusion v1.5 微调项目</span><span class="lang-en">Stable Diffusion v1.5 Fine-tuning</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">AI 工程 · 在校核心项目</span>
+                            <span class="lang-en">AI Engineering · Core Academic Project</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">基于 LoRA 的视觉风格微调</span>
+                            <span class="lang-en">LoRA-based Visual Style Fine-tuning</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">采用 LoRA 技术在 UNet 与 Text Encoder 上成功训练并沉淀"Lunara"美学风格模型。设计了全栈流程，包含数据清洗、全参数精细化评估，并基于 FastAPI 封装后端部署接口。</span>
+                            <span class="lang-en">Trained the "Lunara" aesthetic style model using LoRA on UNet and Text Encoder. Designed end-to-end pipeline including data cleaning, parameter evaluation, and FastAPI backend deployment.</span>
+                        </p>
+                    </div>
+                </a>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-emerald-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    eBay 大数据解决方案设计
-                </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">架构设计 / 数据挖掘</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">PySpark数据治理与SMART指标</h3>
-                    <p class="text-sm text-gray-600 mt-2">设计搭建包含计算引擎、集成与治理层在内的 PySpark 四层大数据处理架构。引入 A/B 测试体系并制定 SMART 评估目标，驱动欺诈交易率下降 8%，提升转化效率。</p>
-                </div>
-            </div>
+                <!-- Project 2: 数码喷印 — clickable, links to GitHub -->
+                <a href="https://github.com/CatPieee/TexFlow_Project"
+                   target="_blank" rel="noopener"
+                   class="project-card reveal reveal-delay-2">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-texflow.jpg -->
+                        <img src="images/proj-texflow.jpg" alt="TexFlow数码喷印平台截图" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">数码喷印文生图 AI 平台</span><span class="lang-en">Digital Print Text-to-Image AI Platform</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">AI 产品管理 · 敏捷交付</span>
+                            <span class="lang-en">AI Product Management · Agile Delivery</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">产业落地文生图平台开发</span>
+                            <span class="lang-en">Industrial Text-to-Image Platform</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">担任产品管理角色，推动平台从 0 到 1 架构设计。集成外部大模型 API 并完成本地化适配，深度管控多部门交付工时，闭环全流程功能测试，成功达成里程碑节点。</span>
+                            <span class="lang-en">Led product management for a 0-to-1 platform build. Integrated external LLM APIs with localization, managed cross-team delivery timelines, and achieved key milestones through end-to-end testing.</span>
+                        </p>
+                    </div>
+                </a>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-orange-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    Fire Brightness 线性回归建模
+                <!-- Project 3: Tableau — two links inside the card body -->
+                <div class="project-card reveal reveal-delay-3">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-tableau.jpg -->
+                        <img src="images/proj-tableau.jpg" alt="Tableau数据分析看板截图" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">Tableau 交互式数据分析看板</span><span class="lang-en">Tableau Interactive Dashboards</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">数据可视化 · 商业洞察</span>
+                            <span class="lang-en">Data Visualization · Business Insights</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">宏观经济与 Netflix 深度看板</span>
+                            <span class="lang-en">Macroeconomic & Netflix Analytics Dashboard</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">基于全球 GDP 宏观经济数据及 Netflix 后台流媒体播放特征，清洗多源异构数据集，在 Tableau 中构建高交互性实时刷新仪表盘，为多维业务决策输出直观支撑。</span>
+                            <span class="lang-en">Cleaned multi-source heterogeneous datasets from global GDP and Netflix streaming data, building highly interactive real-time dashboards in Tableau for multi-dimensional business decision support.</span>
+                        </p>
+                        <div class="project-links">
+                            <a href="https://public.tableau.com/app/profile/ziqing.zhou/viz/CDS542_3310432_assignment2/1?publish=yes"
+                               target="_blank" rel="noopener" class="project-link">
+                                📊 Netflix <span class="arrow">↗</span>
+                            </a>
+                            <a href="https://public.tableau.com/app/profile/ziqing.zhou/viz/Groupproject-V2-1115/ThecorrelationbetweenGDPandeconomicfactors?publish=yes"
+                               target="_blank" rel="noopener" class="project-link">
+                                📈 <span class="lang-zh">GDP 与共享单车</span><span class="lang-en">GDP & Bike-sharing</span> <span class="arrow">↗</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">统计建模 / Python & R</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">火灾亮度多重共线性回归分析</h3>
-                    <p class="text-sm text-gray-600 mt-2">提取复杂地理要素，利用 R 与 Python 联合实施多重共线性 VIF 检验及详尽的残差诊断分析，输出高准确度模型分布图与变量相关性散点图矩阵。</p>
-                </div>
-            </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="bg-teal-600 h-32 flex items-center justify-center text-white font-bold p-4 text-center">
-                    Attentive 看板交互设计
+                <!-- Project 4: eBay — no external link -->
+                <div class="project-card reveal reveal-delay-1">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-ebay.jpg -->
+                        <img src="images/proj-ebay.jpg" alt="eBay大数据架构截图" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">eBay 大数据解决方案设计</span><span class="lang-en">eBay Big Data Solution Design</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">架构设计 · 数据挖掘</span>
+                            <span class="lang-en">Architecture Design · Data Mining</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">PySpark 数据治理与 SMART 指标</span>
+                            <span class="lang-en">PySpark Data Governance & SMART Metrics</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">设计搭建包含计算引擎、集成与治理层在内的 PySpark 四层大数据处理架构。引入 A/B 测试体系并制定 SMART 评估目标，驱动欺诈交易率下降 8%，提升转化效率。</span>
+                            <span class="lang-en">Designed a four-layer PySpark big data architecture covering compute, integration, and governance. Introduced A/B testing with SMART metrics, reducing fraudulent transaction rates by 8%.</span>
+                        </p>
+                    </div>
                 </div>
-                <div class="p-6">
-                    <span class="text-xs font-bold text-indigo-600 uppercase tracking-wide">前端交互 / 产品原型</span>
-                    <h3 class="text-xl font-bold text-gray-900 mt-2">创作者经济与健康监控仪表盘</h3>
-                    <p class="text-sm text-gray-600 mt-2">聚焦创作者变现资产链以及医疗健康场景，深度设计交互式原型。优化界面视觉层级与数据展示逻辑，带来极佳的多终端一致性数据监控体验。</p>
-                </div>
-            </div>
 
+                <!-- Project 5: Fire Brightness — no external link -->
+                <div class="project-card reveal reveal-delay-2">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-fire.jpg -->
+                        <img src="images/proj-fire.jpg" alt="Fire Brightness回归分析截图" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">Fire Brightness 线性回归建模</span><span class="lang-en">Fire Brightness Regression Modeling</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">统计建模 · Python & R</span>
+                            <span class="lang-en">Statistical Modeling · Python & R</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">火灾亮度多重共线性回归分析</span>
+                            <span class="lang-en">Fire Brightness Multicollinearity Regression</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">提取复杂地理要素，利用 R 与 Python 联合实施多重共线性 VIF 检验及详尽的残差诊断分析，输出高准确度模型分布图与变量相关性散点图矩阵。</span>
+                            <span class="lang-en">Extracted complex geographic features, performed multicollinearity VIF testing with R and Python, and produced high-accuracy model distribution plots and correlation scatterplot matrices.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Project 6: 仪表盘设计 — two links inside card body -->
+                <div class="project-card reveal reveal-delay-3">
+                    <div class="project-cover">
+                        <!-- ★ Put your screenshot in images/proj-dashboards.jpg -->
+                        <img src="images/proj-dashboards.jpg" alt="仪表盘交互设计" loading="lazy"
+                             onerror="this.style.display='none'">
+                        <span class="cover-text"><span class="lang-zh">仪表盘交互设计</span><span class="lang-en">Dashboard UX Design</span></span>
+                    </div>
+                    <div class="project-body">
+                        <p class="project-tag">
+                            <span class="lang-zh">前端交互 · 产品原型</span>
+                            <span class="lang-en">UX Design · Product Prototyping</span>
+                        </p>
+                        <h3>
+                            <span class="lang-zh">健康监控与创作者经济仪表盘</span>
+                            <span class="lang-en">Health Monitoring & Creator Economy Dashboards</span>
+                        </h3>
+                        <p>
+                            <span class="lang-zh">聚焦医疗健康场景与创作者变现资产链，深度设计交互式原型。优化界面视觉层级与数据展示逻辑，带来极佳的多终端一致性数据监控体验。</span>
+                            <span class="lang-en">Designed interactive prototypes for healthcare monitoring and creator monetization scenarios. Optimized visual hierarchy and data display logic for consistent cross-device experience.</span>
+                        </p>
+                        <div class="project-links">
+                            <a href="https://elderly-health-dashb-5601.bolt.host/"
+                               target="_blank" rel="noopener" class="project-link">
+                                🏥 <span class="lang-zh">健康监控仪表盘</span><span class="lang-en">Health Dashboard</span> <span class="arrow">↗</span>
+                            </a>
+                            <a href="https://attentive-ai-micro-p-zci4.bolt.host/"
+                               target="_blank" rel="noopener" class="project-link">
+                                🎨 Attentive <span class="lang-zh">创作者经济</span><span class="lang-en">Creator Economy</span> <span class="arrow">↗</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
-    <section id="experience" class="py-20 bg-gray-100 px-4">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">职业发展轨迹</h2>
-            <div class="space-y-8 relative before:absolute before:inset-0 before:left-4 md:before:left-1/2 before:w-0.5 before:bg-gray-300">
-                
-                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between group">
-                    <div class="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-blue-600 border-4 border-white transform -translate-x-1/2 shadow-sm z-10"></div>
-                    <div class="w-full md:w-[45%] bg-white p-6 rounded-xl shadow-sm md:text-right">
-                        <span class="text-sm font-semibold text-blue-600">2022.03 - 2025.08</span>
-                        <h4 class="text-lg font-bold text-gray-900 mt-1">超聚变数字技术有限公司</h4>
-                        <p class="text-sm text-gray-500">PMO 项目专员 / 中级工程师</p>
-                        <p class="text-xs text-gray-600 mt-3 md:text-right text-left">统筹管理包括 GPU 高端服务器机型在内的项目 40 余个。全程参与立项、执行及交付的全生命周期管理，基于项目数据落地流程规范。通过精细化的风险管控，独立闭环 SPDT 级关键问题与潜在危机 100 余项。</p>
+    <!-- Experience -->
+    <section id="experience">
+        <div class="container">
+            <p class="section-label reveal">
+                <span class="lang-zh">职业发展轨迹</span>
+                <span class="lang-en">Career Path</span>
+            </p>
+            <h2 class="section-title reveal reveal-delay-1">
+                <span class="lang-zh">工作经历</span>
+                <span class="lang-en">Professional Experience</span>
+            </h2>
+            <div class="timeline">
+                <!-- Job 1 -->
+                <div class="timeline-item reveal reveal-delay-1">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-period">2022.03 – 2025.08</p>
+                        <h3>
+                            <span class="lang-zh">超聚变数字技术有限公司</span>
+                            <span class="lang-en">xFusion Digital Technologies</span>
+                        </h3>
+                        <p class="timeline-role">
+                            <span class="lang-zh">PMO 项目专员 · 中级工程师</span>
+                            <span class="lang-en">PMO Specialist · Mid-level Engineer</span>
+                        </p>
+                        <p>
+                            <span class="lang-zh">统筹管理包括 GPU 高端服务器机型在内的项目 40 余个。全程参与立项、执行及交付的全生命周期管理，基于项目数据落地流程规范。通过精细化的风险管控，独立闭环 SPDT 级关键问题与潜在危机 100 余项。</span>
+                            <span class="lang-en">Managed 40+ projects including high-end GPU server models. Led full lifecycle from initiation through delivery, establishing process standards based on project data. Independently resolved 100+ SPDT-level critical issues through meticulous risk management.</span>
+                        </p>
                     </div>
-                    <div class="w-full md:w-[45%] hidden md:block"></div>
                 </div>
-
-                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between group">
-                    <div class="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-blue-600 border-4 border-white transform -translate-x-1/2 shadow-sm z-10"></div>
-                    <div class="w-full md:w-[45%] hidden md:block"></div>
-                    <div class="w-full md:w-[45%] bg-white p-6 rounded-xl shadow-sm">
-                        <span class="text-sm font-semibold text-blue-600">2021.12 - 2022.02</span>
-                        <h4 class="text-lg font-bold text-gray-900 mt-1">华为技术有限公司</h4>
-                        <p class="text-sm text-gray-500">部门文员（实习/运营支撑）</p>
-                        <p class="text-xs text-gray-600 mt-3">支撑部门高效率日常运作。精心组织和协调管理层例会 50 余次，敏锐跟踪并推进大客户及重点战略项目落地关键进展 40 余条。策划和执行大型多维团队文化建设与激励活动，全方位激活团队核心凝聚力。</p>
+                <!-- Job 2 -->
+                <div class="timeline-item reveal reveal-delay-2">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-period">2021.12 – 2022.02</p>
+                        <h3>
+                            <span class="lang-zh">华为技术有限公司</span>
+                            <span class="lang-en">Huawei Technologies</span>
+                        </h3>
+                        <p class="timeline-role">
+                            <span class="lang-zh">部门文员（实习 · 运营支撑）</span>
+                            <span class="lang-en">Department Coordinator (Internship · Operations)</span>
+                        </p>
+                        <p>
+                            <span class="lang-zh">支撑部门高效率日常运作。精心组织和协调管理层例会 50 余次，敏锐跟踪并推进大客户及重点战略项目落地关键进展 40 余条。策划和执行大型多维团队文化建设与激励活动，全方位激活团队核心凝聚力。</span>
+                            <span class="lang-en">Supported efficient daily department operations. Organized 50+ management meetings, tracked 40+ key initiatives across major accounts and strategic projects. Planned and executed team culture and motivation events to strengthen team cohesion.</span>
+                        </p>
                     </div>
                 </div>
-
-                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between group">
-                    <div class="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-blue-600 border-4 border-white transform -translate-x-1/2 shadow-sm z-10"></div>
-                    <div class="w-full md:w-[45%] bg-white p-6 rounded-xl shadow-sm md:text-right">
-                        <span class="text-sm font-semibold text-blue-600">2019.02 - 2021.12</span>
-                        <h4 class="text-lg font-bold text-gray-900 mt-1">深圳市宝坤贸易有限公司</h4>
-                        <p class="text-sm text-gray-500">数据分析员 / 亚马逊运营专员</p>
-                        <p class="text-xs text-gray-600 mt-3 md:text-right text-left">对跨国供应链做深度监控，实时追踪海外仓 1000 余款 SKU 核心指标（周转期、货运成本、销售利润）。建立数据库归因分析模型并迭代优化策略 10 余条，自主搭建后台运营决策看板，驱动店铺流量综合转化率飙升 80%。</p>
+                <!-- Job 3 -->
+                <div class="timeline-item reveal reveal-delay-3">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-card">
+                        <p class="timeline-period">2019.02 – 2021.12</p>
+                        <h3>
+                            <span class="lang-zh">深圳市宝坤贸易有限公司</span>
+                            <span class="lang-en">Shenzhen Baokun Trading Co., Ltd.</span>
+                        </h3>
+                        <p class="timeline-role">
+                            <span class="lang-zh">数据分析员 · 亚马逊运营专员</span>
+                            <span class="lang-en">Data Analyst · Amazon Operations Specialist</span>
+                        </p>
+                        <p>
+                            <span class="lang-zh">对跨国供应链做深度监控，实时追踪海外仓 1000 余款 SKU 核心指标（周转期、货运成本、销售利润）。建立数据库归因分析模型并迭代优化策略 10 余条，自主搭建后台运营决策看板，驱动店铺流量综合转化率飙升 80%。</span>
+                            <span class="lang-en">Monitored cross-border supply chain, tracking 1000+ SKU metrics (turnover, shipping costs, profit margins) across overseas warehouses. Built attribution models with 10+ iterative optimizations, developed backend decision dashboards, and drove an 80% increase in store conversion rates.</span>
+                        </p>
                     </div>
-                    <div class="w-full md:w-[45%] hidden md:block"></div>
                 </div>
-
             </div>
         </div>
     </section>
 
-    <section id="contact" class="py-20 bg-white px-4">
-        <div class="max-w-3xl mx-auto text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-6">与我联系</h2>
-            <p class="text-gray-600 mb-10">如果您对我具备的能力以及项目实战经验感兴趣，欢迎随时通过以下渠道与我沟通沟通，期待共同创造价值！</p>
-            <div class="grid md:grid-cols-2 gap-6 max-w-xl mx-auto text-left text-sm">
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <p class="text-gray-500 font-medium">📧 电子邮箱：</p>
-                    <p class="text-gray-900 font-bold mt-1">Zhouziqing997@outlook.com</p>
-                    <p class="text-gray-900 font-bold">Shealynchow997@gmail.com</p>
+    <!-- Contact -->
+    <section id="contact">
+        <div class="container">
+            <p class="section-label reveal">
+                <span class="lang-zh">与我联系</span>
+                <span class="lang-en">Get in Touch</span>
+            </p>
+            <h2 class="section-title reveal reveal-delay-1">
+                <span class="lang-zh">联系方式</span>
+                <span class="lang-en">Contact</span>
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 36px; max-width: 560px;" class="reveal reveal-delay-1">
+                <span class="lang-zh">如果您对我的能力和项目经验感兴趣，欢迎通过以下渠道与我联系，期待共同创造价值。</span>
+                <span class="lang-en">If you're interested in my skills and project experience, feel free to reach out through the channels below. I look forward to creating value together.</span>
+            </p>
+            <div class="contact-grid">
+                <div class="contact-card reveal reveal-delay-1">
+                    <p class="contact-label">📧 Email</p>
+                    <p class="contact-value">Zhouziqing997@outlook.com</p>
+                    <p class="contact-value" style="margin-top:4px;">Shealynchow997@gmail.com</p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                    <p class="text-gray-500 font-medium">📱 联系电话：</p>
-                    <p class="text-gray-900 font-bold mt-1">+86 13672785357 (内地)</p>
-                    <p class="text-gray-900 font-bold">+852 54432745 (香港)</p>
+                <div class="contact-card reveal reveal-delay-2">
+                    <p class="contact-label">📱 <span class="lang-zh">电话</span><span class="lang-en">Phone</span></p>
+                    <p class="contact-value">+86 13672785357 <span style="font-size:12px;color:var(--text-tertiary);" class="lang-zh">内地</span><span style="font-size:12px;color:var(--text-tertiary);" class="lang-en">Mainland</span></p>
+                    <p class="contact-value" style="margin-top:4px;">+852 54432745 <span style="font-size:12px;color:var(--text-tertiary);" class="lang-zh">香港</span><span style="font-size:12px;color:var(--text-tertiary);" class="lang-en">HK</span></p>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100 md:col-span-2 text-center">
-                    <p class="text-gray-500 font-medium">🔗 社交媒体与公众号：</p>
-                    <p class="text-gray-900 font-bold mt-1">LinkedIn: shealyn-chow</p>
-                    <p class="text-blue-600 font-bold">微信公众号: 小二来碗粥</p>
+                <div class="contact-card reveal reveal-delay-3">
+                    <p class="contact-label">🔗 <span class="lang-zh">社交媒体</span><span class="lang-en">Social</span></p>
+                    <p class="contact-value">LinkedIn: shealyn-chow</p>
+                    <p class="contact-value" style="margin-top:4px;">
+                        <span class="lang-zh">微信公众号: 小二来碗粥</span>
+                        <span class="lang-en">WeChat Official: 小二来碗粥</span>
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-gray-400 text-center py-6 text-xs">
-        <p>© 2026 周子晴 Shealyn Chow. Powered by GitHub Pages.</p>
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 周子晴 Shealyn Chow</p>
     </footer>
 
+    <script>
+        /* ========================================
+             LANGUAGE SWITCHER
+             ======================================== */
+        const html = document.documentElement;
+        const langButtons = document.querySelectorAll('.lang-switch button');
+
+        function setLang(lang) {
+            html.setAttribute('data-lang', lang);
+            localStorage.setItem('preferred-lang', lang);
+            langButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+                btn.setAttribute('aria-pressed', btn.dataset.lang === lang);
+            });
+        }
+
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        // Restore saved preference
+        const saved = localStorage.getItem('preferred-lang');
+        if (saved && (saved === 'zh' || saved === 'en')) {
+            setLang(saved);
+        }
+
+        /* ========================================
+             NAVIGATION OVERLAY
+             ======================================== */
+        const navTrigger = document.getElementById('navTrigger');
+        const navOverlay = document.getElementById('navOverlay');
+
+        function openNav() {
+            navOverlay.classList.add('open');
+            navTrigger.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeNav() {
+            navOverlay.classList.remove('open');
+            navTrigger.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        navTrigger.addEventListener('click', () => {
+            navOverlay.classList.contains('open') ? closeNav() : openNav();
+        });
+
+        // Close on link click
+        document.querySelectorAll('[data-nav-close]').forEach(link => {
+            link.addEventListener('click', () => {
+                closeNav();
+                // Smooth scroll is handled by CSS scroll-behavior
+            });
+        });
+
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navOverlay.classList.contains('open')) {
+                closeNav();
+            }
+        });
+
+        /* ========================================
+             SCROLL REVEAL (Intersection Observer)
+             ======================================== */
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -60px 0px',
+            threshold: 0.1
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        /* ========================================
+             PROJECT COVER FALLBACK — center text when no image loaded
+             ======================================== */
+        document.querySelectorAll('.project-cover img').forEach(img => {
+            const checkImage = () => {
+                const cover = img.closest('.project-cover');
+                const hasImage = img.complete && img.naturalWidth > 0;
+                if (!hasImage) {
+                    cover.style.alignItems = 'center';
+                    cover.style.justifyContent = 'center';
+                    const text = cover.querySelector('.cover-text');
+                    if (text) { text.style.textAlign = 'center'; text.style.padding = '20px'; }
+                }
+            };
+            if (img.complete) { checkImage(); }
+            else { img.addEventListener('load', checkImage); img.addEventListener('error', checkImage); }
+        });
+    </script>
 </body>
 </html>
